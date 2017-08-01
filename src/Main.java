@@ -17,10 +17,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
-import res.ControleC1;
+import res.ControleCena1;
 
 /**
  *
@@ -35,34 +33,6 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage ps) {
-		File f = null;
-
-		try {
-			f = new File(System.getProperty("user.dir").concat("/renomear_nataniel_A03.temp"));
-			if (!f.exists()) {
-				f.createNewFile();
-				Alert ale = new Alert(Alert.AlertType.INFORMATION);
-				ale.setTitle("Criador");
-				ale.setHeaderText("Criado por Nataniel");
-				ale.setContentText("Para contado:\nTelegram: @Neoold\nEmail:natanieljava@gmail.com");
-				ale.showAndWait();
-				ale.setTitle("Versão ALFA 3");
-				ale.setHeaderText("Log");
-				ale.setContentText("Versão ALFA_3:"
-						+"\n-Pequenas melhorias e correções de bugs."
-						+"\nVersão ALFA_2:"
-						+ "\n-Corrigido bugs com o linux (acesso a pasta\n"
-						+ "temp sem su)"
-						+ "\n-Corrigido bugs com relação ao numero zero no inicio"
-						+ "\nVersão ALFA_1"
-						+ "\n-Adicionado recurso para renomeação basica.");
-				ale.setHeight(281);
-				ale.showAndWait();
-			}
-		} catch (IOException ex) {
-			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-		}
-
 		Parent par = null;
 		FXMLLoader lod = new FXMLLoader(getClass().getResource("/res/cena1.fxml"));
 		try {
@@ -70,11 +40,11 @@ public class Main extends Application {
 		} catch (IOException ex) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
 		}
-		ControleC1 contro = (ControleC1) lod.getController();
+		ControleCena1 contro = (ControleCena1) lod.getController();
 		Scene sc = new Scene(par);
 		ps.setScene(sc);
 		ps.setResizable(false);
-		ps.setTitle("Renomear - ALFA_03");
+		ps.setTitle("Renomear");
 		ps.show();
 	}
 
