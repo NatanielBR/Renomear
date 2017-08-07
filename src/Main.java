@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Supplier;
@@ -16,7 +18,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import res.ControleCena1;
 
@@ -62,11 +63,14 @@ public class Main extends Application {
 					f.createNewFile();
 					System.out.println("**********************************************");
 					System.out.println("* Bem vindo ao meu programa em modo de texto *");
-					System.out.println("* Essa é a versão: ALFA_03                   *");
+					System.out.println("* Essa é a versão: 4.0                       *");
 					System.out.println("* Criado por nataniel.						 *");
 					System.out.println("* Telegram: @Neoold							 *");
 					System.out.println("* Email: natanieljava@gmail.com				 *");
 					System.out.println("* Log (Somente do modo de texto)             *");
+					System.out.println("*                                            *");
+					System.out.println("* #4.0 -> Nova organização dos comandos de   *");
+					System.out.println("* renomeação.								 *");
 					System.out.println("*                                            *");
 					System.out.println("* #ALFA_03 -> Inserido o modo de texto com   *");
 					System.out.println("* os mesmos recursos que a versão grafica    *");
@@ -96,6 +100,29 @@ public class Main extends Application {
 					case "1":
 						List<String> regras = new ArrayList<>();
 						while (!regra) {
+							if (regras.size()>0) {
+								String[] st=new String[] {"Tipo","Conteudo"};
+								String[] tp=new String[] {"Numeral","Constante"};
+								StringBuilder bu=new StringBuilder();
+								for (String s : st) {
+									bu.append(s+"\t\t\t");
+								}
+								bu.append("\n\n");
+								for (String s: regras) {
+									char c=s.charAt(s.length()-1);
+									switch (c) {
+									case '_':
+										bu.append(tp[0]).append("\t\t\t").append(s.substring(0, s.length()-1));
+										bu.append("\n");
+										break;
+									case '"':
+										bu.append(tp[1]).append("\t\t").append(s.substring(0, s.length()-1));
+										bu.append("\n");
+										break;
+									}
+								}
+								System.out.println(bu);
+							}
 							System.out.println("Agora informe a regra:");
 							System.out.println("1-Numeral" + "\n2-Constante" + "\n3-parar e aplicar regra"
 									+ "\n4-parar, limpar regra(s) antiga(s) e adicionar nova(s) regra(s)");
@@ -105,19 +132,32 @@ public class Main extends Application {
 								System.out.println("Informe o numero:");
 								while (true) {
 									String num = ent.nextLine();
+									if (num.equals("esc")) {
+										break;
+									}
 									if (num.matches("\\S[0-9]*")) {
 										regras.add(num.concat("_"));
 										System.out.println("Adicionado o numero \"" + num + "\"");
 										break;
 									} else {
 										System.out
-												.println("Informe somente numeros, use 'constante' para por espacos.");
+												.println("Informe somente numeros, use 'constante' para por espacos ");
+										System.out.println("ou use 'esc' para voltar.");
 									}
 								}
 								break;
 							case "2":
-								System.out.println("Informe a constante:");
-								regras.add(ent.nextLine().concat("\""));
+								System.out.println("Informe a constante,");
+								System.out.println("Pode usar 'esc' para sair ou '*esc' para escrever o mesmo:");
+								String num=ent.nextLine();
+								if (num.equals("esc")) {
+									break;
+								}else if (num.equals("*esc")) {
+									num=num.replaceFirst("*", "");
+									regras.add(num.concat("\""));
+								}else {
+									regras.add(num.concat("\""));
+								}
 								break;
 							case "3":
 								if (!regras.isEmpty()) {
@@ -183,6 +223,8 @@ public class Main extends Application {
 					System.out.println(
 							"Opa, parece que deu um erro no caminho da pasta, olha... eu recebi isso:\n" + cam);
 					System.out.println("Informe outro caminho ou revise o mesmo.");
+					e.printStackTrace();
+
 				}
 			}
 			ent.close();
@@ -212,10 +254,13 @@ public class Main extends Application {
 				StringBuilder bu = new StringBuilder();
 				for (int ii = 0; ii != regras.size(); ii++) {
 					String num = regras.get(ii);
-					if (num.contains("\"")) {
-						bu.append(num.replaceAll("\"", ""));
-					} else if (num.contains("_")) {
-						num = num.replaceAll("_", "");
+					char val = num.charAt(num.length() - 1);
+					switch (val) {
+					case '"':
+						bu.append(num.substring(0, num.length() - 1));
+						break;
+					case '_':
+						num = num.substring(0, num.length() - 1);
 						if (num.startsWith("0")) {
 							char[] arr = num.toCharArray();
 							int numer = Integer.parseInt(Character.toString(arr[arr.length - 1]));
@@ -232,20 +277,26 @@ public class Main extends Application {
 							}
 
 						}
+						break;
 					}
+
 				}
 				index++;
 				System.out.println("Previa " + index + "º " + bu);
 			}
+			return;
 		}
 		lista.get().forEach((e) -> {
 			StringBuilder bu = new StringBuilder();
 			for (int ii = 0; ii != regras.size(); ii++) {
 				String num = regras.get(ii);
-				if (num.contains("\"")) {
-					bu.append(num.replaceAll("\"", ""));
-				} else if (num.contains("_")) {
-					num = num.replaceAll("_", "");
+				char val = num.charAt(num.length() - 1);
+				switch (val) {
+				case '"':
+					bu.append(num.substring(0, num.length() - 1));
+					break;
+				case '_':
+					num = num.substring(0, num.length() - 1);
 					if (num.startsWith("0")) {
 						char[] arr = num.toCharArray();
 						int numer = Integer.parseInt(Character.toString(arr[arr.length - 1]));
@@ -262,6 +313,7 @@ public class Main extends Application {
 						}
 
 					}
+					break;
 				}
 
 			}
@@ -279,6 +331,7 @@ public class Main extends Application {
 				break;
 			case 3:
 				System.out.println("Previa " + index + "º \"" + bu + "\"");
+				break;
 			}
 		});
 	}

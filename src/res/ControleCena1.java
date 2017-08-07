@@ -11,6 +11,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -23,6 +25,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
 import javafx.stage.FileChooser;
 
 public class ControleCena1 implements Initializable {
@@ -53,7 +56,44 @@ public class ControleCena1 implements Initializable {
 
 	@FXML
 	private TableView<ObservableList<String>> tablePrevia;
-
+	private EventHandler<ActionEvent> actAddTabela= (e)->{
+		String tipo = regraT.getValue() == null ? "nulo" : regraT.getValue();
+		String conteudo = regraC.getText();
+		switch (tipo) {
+		case "Numeral":
+			if (conteudo.matches("[0-9]*") && !conteudo.equals("")) {
+				List<String> ls = new ArrayList<>();
+				ls.add(Integer.toString(prioridade));
+				ls.add(tipo);
+				ls.add(conteudo);
+				lista.add(ls);
+				atualizarTabela(lista, colunas);
+				prioridade++;
+				if (tabela.getItems().size()>0) {
+					buttonPrevia.setDisable(false);
+				}
+			}else {
+				Alert ale=new Alert(AlertType.INFORMATION);
+				ale.setTitle("Aconteceu um probleminha!");
+				ale.setHeaderText("Acho que vi algo que não foi numero ai!");
+				ale.setContentText("No tipo \"Numeral\" não se deve colocar \nespaços ou letras.");
+				ale.showAndWait();
+			}
+			break;
+		case "Constante":
+			List<String> ls = new ArrayList<>();
+			ls.add(Integer.toString(prioridade));
+			ls.add(tipo);
+			ls.add(conteudo);
+			lista.add(ls);
+			atualizarTabela(lista, colunas);
+			prioridade++;
+			if (tabela.getItems().size()>0) {
+				buttonPrevia.setDisable(false);
+			}
+			break;
+		}
+	};
 	@FXML
 	private Button aplicar;
 
@@ -62,12 +102,13 @@ public class ControleCena1 implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		
 		String[] nomes = new String[] { "Numeral", "Constante" };
 		regraT.getItems().addAll(nomes);
 		criarColunas();
 		criado.setOnMouseClicked((e)->{
 			Alert ale=new Alert(AlertType.INFORMATION);
-			ale.setTitle("Versão 4.0");
+			ale.setTitle("Versão 4.1");
 			ale.setHeaderText("Criado por nataniel!");
 			ale.setContentText("Contato:\nTelegram: @Neoold\nEmail: natanieljava@gmail.com");
 			ale.show();
@@ -154,69 +195,41 @@ public class ControleCena1 implements Initializable {
 			}
 		});
 		voltar.setOnAction((e) -> {
-			tpane.getTabs().get(0).setDisable(false);
-			tpane.getSelectionModel().select(0);
-			tpane.getTabs().get(1).setDisable(true);
-			tabela.getItems().clear();
-			tabela.getColumns().clear();
-			prioridade = 1;
-			colunas.clear();
-			criarColunas();
-			lista.clear();
+			limpar();
 		});
 		aplicar.setOnAction((e) -> {
-			tpane.getTabs().get(0).setDisable(false);
-			tpane.getSelectionModel().select(0);
-			tpane.getTabs().get(1).setDisable(true);
-			tabela.getItems().clear();
-			tabela.getColumns().clear();
-			prioridade = 1;
-			colunas.clear();
-			criarColunas();
-			lista.clear();
-
+			limpar();
 			for (int i = 0; i != fil.size(); i++) {
 				File f = fil.get(i);
 				f.renameTo(renomearArquivo(tablePrevia.getItems().get(i).get(1), f));
 			}
 
 		});
-		adicionar.setOnAction((e) -> {
-			String tipo = regraT.getValue() == null ? "nulo" : regraT.getValue();
-			String conteudo = regraC.getText();
-			switch (tipo) {
-			case "Numeral":
-				if (conteudo.matches("[0-9]*")) {
-					List<String> ls = new ArrayList<>();
-					ls.add(Integer.toString(prioridade));
-					ls.add(tipo);
-					ls.add(conteudo);
-					lista.add(ls);
-					atualizarTabela(lista, colunas);
-					prioridade++;
-					if (tabela.getItems().size()>0) {
-						buttonPrevia.setDisable(false);
-					}
-				}
-				break;
-			case "Constante":
-				List<String> ls = new ArrayList<>();
-				ls.add(Integer.toString(prioridade));
-				ls.add(tipo);
-				ls.add(conteudo);
-				lista.add(ls);
-				atualizarTabela(lista, colunas);
-				prioridade++;
-				if (tabela.getItems().size()>0) {
-					buttonPrevia.setDisable(false);
-				}
-				break;
+		adicionar.setOnAction(actAddTabela);
+		regraC.setOnAction(actAddTabela);
+		regraC.setOnKeyPressed((e)->{
+			if (e.getCode()==KeyCode.S && e.isControlDown()) {
+				regraT.getSelectionModel().select(0);
+			}else if (e.getCode()==KeyCode.D && e.isControlDown()) {
+				regraT.getSelectionModel().select(1);
 			}
 		});
 	}
-
+	private void limpar() {
+		tpane.getTabs().get(0).setDisable(false);
+		tpane.getSelectionModel().select(0);
+		tpane.getTabs().get(1).setDisable(true);
+		tabela.getItems().clear();
+		tabela.getColumns().clear();
+		prioridade = 1;
+		colunas.clear();
+		criarColunas();
+		lista.clear();
+		regraC.setText("");
+		regraT.getSelectionModel().clearSelection();
+	}
 	private void atualizarTabela(ArrayList<List<String>> conteudo,
-			List<TableColumn<ObservableList<String>, String>> tbc) {
+		List<TableColumn<ObservableList<String>, String>> tbc) {
 		tabela.getColumns().clear();
 		tabela.getItems().clear();
 		for (int i = 0; i < tbc.size(); i++) {
@@ -242,6 +255,7 @@ public class ControleCena1 implements Initializable {
 			List<TableColumn<ObservableList<String>, String>> tbc) {
 		tablePrevia.getColumns().clear();
 		tablePrevia.getItems().clear();
+		regraC.setText("");
 		for (int i = 0; i < tbc.size(); i++) {
 			int ss = i;
 			TableColumn<ObservableList<String>, String> Col = tbc.get(i);
