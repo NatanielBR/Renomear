@@ -9,7 +9,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="428.0" prefWidth="510.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="res.ControleCena1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="428.0" prefWidth="510.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="res.ControleCena1">
    <children>
       <TabPane fx:id="tpane" prefHeight="406.0" prefWidth="510.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
@@ -42,6 +42,6 @@
             </Tab>
         </tabs>
       </TabPane>
-      <Label fx:id="criado" layoutX="292.0" layoutY="406.0" opacity="0.49" text="Criado por nataniel - Versao: 4.1" />
+      <Label fx:id="criado" layoutX="255.0" layoutY="406.0" opacity="0.49" text="Criado por nataniel - Versao: 5.0 - Beta" />
    </children>
 </AnchorPane>

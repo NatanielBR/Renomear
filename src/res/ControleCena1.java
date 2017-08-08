@@ -4,7 +4,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -59,10 +61,11 @@ public class ControleCena1 implements Initializable {
 	private EventHandler<ActionEvent> actAddTabela= (e)->{
 		String tipo = regraT.getValue() == null ? "nulo" : regraT.getValue();
 		String conteudo = regraC.getText();
+		List<String> ls=null;
 		switch (tipo) {
 		case "Numeral":
 			if (conteudo.matches("[0-9]*") && !conteudo.equals("")) {
-				List<String> ls = new ArrayList<>();
+				ls = new ArrayList<>();
 				ls.add(Integer.toString(prioridade));
 				ls.add(tipo);
 				ls.add(conteudo);
@@ -81,7 +84,7 @@ public class ControleCena1 implements Initializable {
 			}
 			break;
 		case "Constante":
-			List<String> ls = new ArrayList<>();
+			ls = new ArrayList<>();
 			ls.add(Integer.toString(prioridade));
 			ls.add(tipo);
 			ls.add(conteudo);
@@ -90,6 +93,20 @@ public class ControleCena1 implements Initializable {
 			prioridade++;
 			if (tabela.getItems().size()>0) {
 				buttonPrevia.setDisable(false);
+			}
+			break;
+		case "Substituir":
+			if (statics.Subtituir.validar(conteudo)) {
+				ls = new ArrayList<>();
+				ls.add(Integer.toString(prioridade));
+				ls.add(tipo);
+				ls.add(conteudo);
+				lista.add(ls);
+				atualizarTabela(lista, colunas);
+				prioridade++;
+				if (tabela.getItems().size()>0) {
+					buttonPrevia.setDisable(false);
+				}
 			}
 			break;
 		}
@@ -103,7 +120,7 @@ public class ControleCena1 implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		
-		String[] nomes = new String[] { "Numeral", "Constante" };
+		String[] nomes = new String[] { "Numeral", "Constante", "Substituir" };
 		regraT.getItems().addAll(nomes);
 		criarColunas();
 		criado.setOnMouseClicked((e)->{
@@ -156,7 +173,9 @@ public class ControleCena1 implements Initializable {
 					StringBuilder bu = new StringBuilder();
 					for (List<String> list : lista) {
 						String cont = list.get(2);
-						if (list.get(1).equals("Numeral")) {
+						String tipo=list.get(1);
+						switch (tipo) {
+						case ("Numeral"):
 							if (cont.startsWith("0")) {
 								StringBuilder bstr = new StringBuilder();
 								char[] arr = cont.toCharArray();
@@ -176,8 +195,17 @@ public class ControleCena1 implements Initializable {
 							} else {
 								cont = Integer.toString(Integer.parseInt(cont) + i);
 							}
+							break;
+						case "Constante":
+							bu.append(cont);
+							break;
+						case "Substituir":
+							//cont é a entrada
+							String[] dados=statics.Subtituir.processarN(cont);
+							String antt=renomearString(f);
+							bu.append(antt.contains(dados[0])?antt.replace(dados[0], dados[1]):antt);
+							break;
 						}
-						bu.append(cont);
 					}
 					arquivoA.add(renomearString(f));
 					arquivoN.add(bu.toString());
