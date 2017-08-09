@@ -1,0 +1,52 @@
+Ola bem vindo ao guia de uso do Renomear.
+
+1- Oque é as regras?
+
+As regras irá determinar o novo nome do arquivo.
+
+2- Como elas são divididas?
+
+Existe três tipos de regras:
+
+- Numeral:
+    Nesse tipo, o conteudo deve ser somente numeros. Espaços, letras e simbolos 
+não deve ser colocado aqui. Uma caracteristica desse tipo é que o numero 
+presente irá ser incrementado uma unidade, sempre que passa de um arquivo para 
+outro.
+
+- Constante:
+    Nesse tipo, o conteudo pode ser qualquer coisa, letras, simbolos, espaços e
+até numeros porém diferente do tipo numeral, se escrever um numero nesse tipo
+ele não irá se alterar.
+
+- Substituir: (Nova regra)
+    Esse tipo é um pouco complexo mas funciona da seguinde forma: Escreva em seu
+conteudo oque ele deve achar e caso ele ache, oque deve substituir usando a 
+seguinte forma:
+
+    (condição)**(oque deve colocar)
+
+    Note o uso dos dois asteriscos. Ele irá separar a condição do caso.
+
+    Na regra Substituir existe algumas constantes, que pode ser usada para deixar
+mais interessante o resultado.
+
+    São elas, as constantes:
+
+    $num -> indica o numero do arquivo
+
+    $cond -> indica o termo da condição
+
+    É possivel realizar operações aritimeticas (soma(+),subtração(-), divisão(/)
+e multiplicação(*)) com a constante num e ainda é possivel alterar esse constante
+usando a seguinte forma (considere que $num seja zero):
+
+    foto**foto numero $$num+1
+
+    O retorno sería: foto numero 1. E a constante $num ficaria com 1.
+
+    Se for assim:
+
+    foto **foto numero $num+1
+
+    O retorno sería: foto numero 1. E a constante $num ficaria com zero.
