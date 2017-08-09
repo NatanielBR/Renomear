@@ -35,4 +35,4 @@ Agora com suporte a linha de comando, o Renomear agora pode ser executado com os
 
 # Como usar (Modo Texto)
 
-Não é nescessario um tutorial a respeito desse modo por que ele é bem intuitivo!
+Para entrar nesse modo execute o seguinte comando, "java -jar "nome do arquivo".jar tm " (sem aspas), após rodar o comando siga oque se pede pois é bem intuitivo.
