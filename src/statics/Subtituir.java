@@ -35,12 +35,12 @@ public final class Subtituir {
         }
         casos = caso.split(" ");
         for (String s : casos) {
-            if (s.matches("[0-9/s+*/]*")){
-                ant=s;
-                String ssres="";
+            if (s.matches("[0-9/s+*/]*")) {
+                ant = s;
+                String ssres = "";
                 try {
                     ssres = Double.toString(Parser.parse(s).value());
-                    ssres=ssres.substring(0,ssres.indexOf("."));
+                    ssres = ssres.substring(0, ssres.indexOf("."));
                 } catch (SyntaxException ex) {
                     Logger.getLogger(Subtituir.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -48,11 +48,11 @@ public final class Subtituir {
             }
             if (s.contains("$") && !s.equals(ant)) {
                 ant = s;
-                s=s.replace("$", "");
-                String ssres="";
+                s = s.replace("$", "");
+                String ssres = "";
                 try {
                     ssres = Double.toString(Parser.parse(s).value());
-                    ssres=ssres.substring(0,ssres.indexOf("."));
+                    ssres = ssres.substring(0, ssres.indexOf("."));
                 } catch (SyntaxException ex) {
                     Logger.getLogger(Subtituir.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -61,18 +61,22 @@ public final class Subtituir {
             }
         }
         //System.out.println("num "+constantes.get("$num"));
-        return new String[]{cond,caso};
+        return new String[]{cond, caso};
     }
 
     public static boolean validar(String a) {
-        if (a.contains("**")){
-        return true;
-        }else{
+        try {
+            String cont = a.substring(0,a.indexOf("**"));
+            return !cont.contains("$");
+        } catch (Exception e) {
             return false;
         }
+
     }
+
     /**
      * Objetivo de validar a string
+     *
      * @param a
      * @return
      * @throws Exception
