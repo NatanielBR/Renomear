@@ -49,7 +49,7 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem fx:id="miSair" mnemonicParsing="false" text="Sair" />
+                  <MenuItem fx:id="miSair" mnemonicParsing="false" text="Sair" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Regra">
@@ -67,6 +67,6 @@
           </Menu>
         </menus>
       </MenuBar>
-      <Label layoutX="428.0" layoutY="470.0" opacity="0.49" text="5.0.1-Beta" />
+      <Label layoutX="475.0" layoutY="470.0" opacity="0.49" text="5.0" />
    </children>
 </AnchorPane>

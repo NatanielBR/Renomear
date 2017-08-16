@@ -34,6 +34,6 @@ public class Numeral {
         return cont;
     }
     public static boolean validar(String cont){
-        return cont.matches("/s[0-9]*");
+        return cont.matches("[0-9]*")&& !cont.equals("");
     }
 }

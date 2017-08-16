@@ -9,11 +9,11 @@ import java.util.logging.Logger;
 
 public final class Subtituir {
 
-    public static String[] processarN(String a) {
+    public static String[] processarN(String a,String num) {
         Map<String, String> constantes = new HashMap<>();
         int ccond = a.indexOf("**");
         String cond = a.substring(0, ccond);
-        constantes.put("$num", "0");
+        constantes.put("$num", num);
         constantes.put("$cond", cond);
 
         String caso = a.substring(ccond + 2);

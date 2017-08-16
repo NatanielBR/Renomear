@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -21,7 +22,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TabPane;
@@ -29,6 +29,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.stage.FileChooser;
 
@@ -40,6 +41,7 @@ public class ControleCena1 implements Initializable {
     private List<TableColumn<ObservableList<String>, String>> colunas = new ArrayList<>();
 
     private ArrayList<List<String>> lista = new ArrayList<>();
+    private ArrayList<List<String>> listaF = new ArrayList<>();
 
     private List<File> fil = null;
 
@@ -83,11 +85,10 @@ public class ControleCena1 implements Initializable {
 
     @FXML
     private Button buttonPrevia;
-
+    
     @FXML
     private TableView<ObservableList<String>> tablePrevia;
 
-    @FXML
     private EventHandler<ActionEvent> actAlterarTipo = (e) -> {
         MenuItem ii = (MenuItem) e.getSource();
         regraT.getSelectionModel().select(ii.getText());
@@ -96,55 +97,8 @@ public class ControleCena1 implements Initializable {
     private EventHandler<ActionEvent> actAddTabela = (e) -> {
         String tipo = regraT.getValue() == null ? "nulo" : regraT.getValue();
         String conteudo = regraC.getText();
-        List<String> ls = null;
-        switch (tipo) {
-            case "Numeral":
-                if (statics.Numeral.validar(conteudo)) {
-                    ls = new ArrayList<>();
-                    ls.add(Integer.toString(prioridade));
-                    ls.add(tipo);
-                    ls.add(conteudo);
-                    lista.add(ls);
-                    atualizarTabela(lista, colunas);
-                    prioridade++;
-                    if (tabela.getItems().size() > 0) {
-                        buttonPrevia.setDisable(false);
-                    }
-                } else {
-                    Alert ale = new Alert(AlertType.INFORMATION);
-                    ale.setTitle("Aconteceu um probleminha!");
-                    ale.setHeaderText("Acho que vi algo que não foi numero ai!");
-                    ale.setContentText("No tipo \"Numeral\" não se deve colocar \nespaços ou letras.");
-                    ale.showAndWait();
-                }
-                break;
-            case "Constante":
-                ls = new ArrayList<>();
-                ls.add(Integer.toString(prioridade));
-                ls.add(tipo);
-                ls.add(conteudo);
-                lista.add(ls);
-                atualizarTabela(lista, colunas);
-                prioridade++;
-                if (tabela.getItems().size() > 0) {
-                    buttonPrevia.setDisable(false);
-                }
-                break;
-            case "Substituir":
-                if (statics.Subtituir.validar(conteudo)) {
-                    ls = new ArrayList<>();
-                    ls.add(Integer.toString(prioridade));
-                    ls.add(tipo);
-                    ls.add(conteudo);
-                    lista.add(ls);
-                    atualizarTabela(lista, colunas);
-                    prioridade++;
-                    if (tabela.getItems().size() > 0) {
-                        buttonPrevia.setDisable(false);
-                    }
-                }
-                break;
-        }
+        criarBackup(lista);
+        adicionarLista(tipo, conteudo);
     };
     @FXML
     private Button aplicar;
@@ -164,7 +118,7 @@ public class ControleCena1 implements Initializable {
 
         miSobre.setOnAction((e) -> {
             Alert ale = new Alert(AlertType.INFORMATION);
-            ale.setTitle("Versão 5.0.1 - Beta");
+            ale.setTitle("Versão 5.0 - Estavel");
             ale.setHeaderText("Criado por nataniel!");
             ale.setContentText("Contato:\nTelegram: @Neoold\nEmail: natanieljava@gmail.com");
             ale.show();
@@ -225,76 +179,36 @@ public class ControleCena1 implements Initializable {
                 tpane.getTabs().get(1).setDisable(false);
                 tpane.getSelectionModel().select(1);
                 tpane.getTabs().get(0).setDisable(true);
-                List<String> arquivoA = new ArrayList<>();
-                List<String> arquivoN = new ArrayList<>();
-                boolean semNumero = false;
-                for (List<String> s : lista) {
-                    if (s.get(1).equals("Substituir") && s.get(2).contains("$num")){
-                        semNumero = false;
-                    }else if (!s.get(1).equals("Numeral")) {
-                        semNumero = true;
-                        break;
-                    } else {
-                        semNumero = false;
-                    }
-                }
-                if (semNumero) {
-                    List<String> numeral = new ArrayList<>();
-                    numeral.add("");
-                    numeral.add("Constante");
-                    numeral.add(" ");
-                    lista.add(numeral);
-                    numeral=new ArrayList<>();
-                    numeral.add("");
-                    numeral.add("Numeral");
-                    numeral.add("01");
-                    lista.add(numeral);
-                }
-                for (int i = 0; i != fil.size(); i++) {
-                    File f = fil.get(i);
-                    StringBuilder bu = new StringBuilder();
-                    for (List<String> list : lista) {
-                        String cont = list.get(2);
-                        String tipo = list.get(1);
-                        switch (tipo) {
-                            case ("Numeral"):
-                                cont = statics.Numeral.processarN(cont, i);
-                                bu.append(cont);
-                                break;
-                            case "Constante":
-                                bu.append(cont);
-                                break;
-                            case "Substituir":
-                                //cont é a entrada
-                                String[] dados = statics.Subtituir.processarN(cont);
-                                String antt = renomearString(f);
-                                bu.append(antt.contains(dados[0]) ? antt.replace(dados[0], dados[1]) : antt);
-                                break;
-                        }
-                    }
-                    arquivoA.add(renomearString(f));
-                    arquivoN.add(bu.toString());
-                }
-                lista.clear();
+                Object[] arquivos=statics.Renomear.criarRenomeacao(lista, fil);
+                List<String> arquivoA=(List<String>) arquivos[0];
+                List<String> arquivoN=(List<String>) arquivos[1];
+                listaF = new ArrayList<>();
                 colunas.clear();
                 criarColunas2();
                 for (int i = 0; i != fil.size(); i++) {
                     List<String> cont = new ArrayList<>();
                     cont.add(arquivoA.get(i));
                     cont.add(arquivoN.get(i));
-                    lista.add(cont);
+                    listaF.add(cont);
                 }
-                atualizarTabela2(lista, colunas);
+                atualizarTabela2(listaF, colunas);
             }
         });
         voltar.setOnAction((e) -> {
-            limpar();
+            tpane.getTabs().get(0).setDisable(false);
+            tpane.getSelectionModel().select(0);
+            tpane.getTabs().get(1).setDisable(true);
+            colunas.clear();
+            criarColunas();
+            atualizarTabela(lista, colunas);
         });
-        aplicar.setOnAction((e) -> {
+        aplicar.setOnAction((ActionEvent e) -> {
             limpar();
-            for (int i = 0; i != fil.size(); i++) {
-                File f = fil.get(i);
-                f.renameTo(renomearArquivo(tablePrevia.getItems().get(i).get(1), f));
+            ObservableList<ObservableList<String>> l=tablePrevia.getItems();
+            int i=0;
+            for (File f : fil) {
+                f.renameTo(renomearArquivo(l.get(i).get(1), f));
+                i++;
             }
 
         });
@@ -325,6 +239,10 @@ public class ControleCena1 implements Initializable {
         lista.clear();
         regraC.setText("");
         regraT.getSelectionModel().clearSelection();
+    }
+
+    private void criarBackup(ArrayList<List<String>> back) {
+        listaF = back;
     }
 
     private void atualizarTabela(ArrayList<List<String>> conteudo,
@@ -378,6 +296,23 @@ public class ControleCena1 implements Initializable {
         String[] nomes = new String[]{"Prioridade", "Tipo", "Conteudo"};
         for (int i = 0; i < nomes.length; i++) {
             TableColumn<ObservableList<String>, String> col = new TableColumn<>(nomes[i]);
+            if (i == 2) {
+                col.setCellFactory(TextFieldTableCell.forTableColumn());
+                col.setOnEditCommit((e) -> {
+                    ObservableList<String> arr = e.getRowValue();
+                    for (int j = 0; j != lista.size(); j++) {
+                        List<String> ll=lista.get(j);
+                        if (ll.equals(arr)) {
+                            String tipo = arr.get(1);
+                            String conteudo = e.getNewValue();
+                            adicionarListaIndex(tipo, conteudo, j);
+                            criarBackup(lista);
+                            atualizarTabela(lista, colunas);
+                        }
+                    }
+
+                });
+            }
             colunas.add(col);
         }
         tabela.getColumns().addAll(colunas);
@@ -399,6 +334,80 @@ public class ControleCena1 implements Initializable {
         return no.replace(exten, "");
     }
 
+    private void adicionarListaIndex(String tipo, String conteudo,int j) {
+        switch (tipo) {
+            case "Numeral":
+                if (statics.Numeral.validar(conteudo)) {
+                    List<String> a=lista.get(j);
+                    a.set(2,conteudo);
+                    lista.set(j,a);
+                }
+                break;
+            case "Constante":
+                lista.get(j).remove(2);
+                lista.get(j).add(conteudo);
+                break;
+            case "Substituir":
+                if (statics.Subtituir.validar(conteudo)) {
+                    lista.get(j).remove(2);
+                    lista.get(j).add(conteudo);
+                
+                }
+                break;
+        }
+    }
+
+    private void adicionarLista(String tipo,String conteudo){
+        List<String> ls;
+        switch (tipo) {
+            case "Numeral":
+                if (statics.Numeral.validar(conteudo)) {
+                    ls = new ArrayList<>();
+                    ls.add(Integer.toString(prioridade));
+                    ls.add(tipo);
+                    ls.add(conteudo);
+                    lista.add(ls);
+                    atualizarTabela(lista, colunas);
+                    prioridade++;
+                    if (tabela.getItems().size() > 0) {
+                        buttonPrevia.setDisable(false);
+                    }
+                } else {
+                    Alert ale = new Alert(AlertType.INFORMATION);
+                    ale.setTitle("Aconteceu um probleminha!");
+                    ale.setHeaderText("Acho que vi algo que não foi numero ai!");
+                    ale.setContentText("No tipo \"Numeral\" não se deve colocar \nespaços ou letras.");
+                    ale.showAndWait();
+                }
+                break;
+            case "Constante":
+                ls = new ArrayList<>();
+                ls.add(Integer.toString(prioridade));
+                ls.add(tipo);
+                ls.add(conteudo);
+                lista.add(ls);
+                atualizarTabela(lista, colunas);
+                prioridade++;
+                if (tabela.getItems().size() > 0) {
+                    buttonPrevia.setDisable(false);
+                }
+                break;
+            case "Substituir":
+                if (statics.Subtituir.validar(conteudo)) {
+                    ls = new ArrayList<>();
+                    ls.add(Integer.toString(prioridade));
+                    ls.add(tipo);
+                    ls.add(conteudo);
+                    lista.add(ls);
+                    atualizarTabela(lista, colunas);
+                    prioridade++;
+                    if (tabela.getItems().size() > 0) {
+                        buttonPrevia.setDisable(false);
+                    }
+                }
+                break;
+        }
+    }
     private File renomearArquivo(String nome, File antigo) {
         String path = antigo.getPath();
         String no = antigo.getName().replace(path, "");
