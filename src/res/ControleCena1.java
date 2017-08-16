@@ -2,6 +2,7 @@ package res;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -411,14 +412,7 @@ public class ControleCena1 implements Initializable {
     private File renomearArquivo(String nome, File antigo) {
         String path = antigo.getPath();
         String no = antigo.getName().replace(path, "");
-
-        String[] aa = path.split(File.separator);
-        StringBuilder bu = new StringBuilder();
-        for (int i = 0; i < aa.length - 1; i++) {
-            String st = aa[i];
-            bu.append(st).append(File.separator);
-        }
-        path = bu.toString();
+        path = antigo.getAbsolutePath().replace(no, "");
         String exten = no.contains(".") ? no.substring(no.lastIndexOf(".")) : "";
         return new File(path.concat(nome.concat(exten)));
     }
