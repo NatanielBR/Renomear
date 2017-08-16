@@ -1,6 +1,9 @@
 # Renomear
 Simples aplicação java para renomear diversos arquivos usando um padrão definido pelo usuario.
 
+# Versão 5.0.1 Beta
+Agradecimentos para darius, que desenvolve esse repositorio: https://github.com/darius/expr , (Usado na versão 5.0.1-Beta e adiante).
+
 # Versão 4.1
 Agora com suporte a linha de comando, o Renomear agora pode ser executado com os mesmo recursos que o modo grafico possui (não totalmente).
 
