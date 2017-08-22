@@ -28,14 +28,18 @@ seguinte forma:
 
     Note o uso dos dois asteriscos. Ele irá separar a condição do caso.
 
-    Na regra Substituir existe algumas constantes, que pode ser usada para deixar
-mais interessante o resultado.
-
-    São elas, as constantes:
+    Na regra Substituir existe algumas constantes, que pode ser usada para deixar 
+o resultado mais interessante.
 
     $num -> indica o numero do arquivo
 
     $cond -> indica o termo da condição
+
+    $Pnum -> retorna o primeiro numero do antigo nome, caso nao ache irá retornar
+nada.
+
+    $Unum -> retorna o ultimo numero do antigo nome, caso nao ache irá retornar 
+nada.
 
     É possivel realizar operações aritimeticas (soma(+),subtração(-), divisão(/)
 e multiplicação(*)) com a constante num e ainda é possivel alterar esse constante

@@ -119,7 +119,7 @@ public class ControleCena1 implements Initializable {
 
         miSobre.setOnAction((e) -> {
             Alert ale = new Alert(AlertType.INFORMATION);
-            ale.setTitle("Versão 5.0 - Estavel");
+            ale.setTitle("Versão 5.1 - Estavel");
             ale.setHeaderText("Criado por nataniel!");
             ale.setContentText("Contato:\nTelegram: @Neoold\nEmail: natanieljava@gmail.com");
             ale.show();
@@ -349,7 +349,7 @@ public class ControleCena1 implements Initializable {
                 lista.get(j).add(conteudo);
                 break;
             case "Substituir":
-                if (statics.Subtituir.validar(conteudo)) {
+                if (statics.Substituir.validar(conteudo)) {
                     lista.get(j).remove(2);
                     lista.get(j).add(conteudo);
                 
@@ -394,7 +394,7 @@ public class ControleCena1 implements Initializable {
                 }
                 break;
             case "Substituir":
-                if (statics.Subtituir.validar(conteudo)) {
+                if (statics.Substituir.validar(conteudo)) {
                     ls = new ArrayList<>();
                     ls.add(Integer.toString(prioridade));
                     ls.add(tipo);

@@ -14,3 +14,7 @@ hs_err_pid*
 /nbproject/
 /build.xml
 /manifest.mf
+/Teste/nbproject/private/
+/Teste/build/
+/MinergateView/nbproject/private/
+/MinergateView/build/

@@ -67,6 +67,6 @@
           </Menu>
         </menus>
       </MenuBar>
-      <Label layoutX="475.0" layoutY="470.0" opacity="0.49" text="5.0" />
+      <Label layoutX="475.0" layoutY="470.0" opacity="0.49" text="5.1" />
    </children>
 </AnchorPane>

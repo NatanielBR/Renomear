@@ -5,8 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
@@ -68,9 +66,11 @@ public class Main extends Application {
                     System.out.println("* Bem vindo ao meu programa em modo de texto *");
                     System.out.println("* Essa é a versão: 5.0                       *");
                     System.out.println("* Criado por nataniel.			     *");
-                    System.out.println("* Telegram: @Neoold     		             *");
+                    System.out.println("* Telegram: @Neoold                          *");
                     System.out.println("* Email: natanieljava@gmail.                 *");
                     System.out.println("* Log (Somente do modo de texto)             *");
+                    System.out.println("*                                            *");
+                    System.out.println("* #5.1 -> Regra Substituir implementada.     *");
                     System.out.println("*                                            *");
                     System.out.println("* #5.0 -> Regra Substituir incluido.         *");
                     System.out.println("*                                            *");
@@ -180,7 +180,7 @@ public class Main extends Application {
                                             String con = ent.nextLine();
                                             if (con.equals("esc")) {
                                                 break;
-                                            } else if (statics.Subtituir.validar(con)) {
+                                            } else if (statics.Substituir.validar(con)) {
                                                 List<String> dados = new ArrayList<>();
                                                 dados.add("");
                                                 dados.add("Substituir");
