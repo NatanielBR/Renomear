@@ -2,10 +2,8 @@ package res;
 
 import java.io.File;
 import java.net.URL;
-import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -13,6 +11,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -33,6 +32,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.stage.FileChooser;
+import sun.audio.AudioPlayer;
 
 public class ControleCena1 implements Initializable {
 
@@ -86,7 +86,7 @@ public class ControleCena1 implements Initializable {
 
     @FXML
     private Button buttonPrevia;
-    
+
     @FXML
     private TableView<ObservableList<String>> tablePrevia;
 
@@ -100,6 +100,35 @@ public class ControleCena1 implements Initializable {
         String conteudo = regraC.getText();
         criarBackup(lista);
         adicionarLista(tipo, conteudo);
+    };
+    private EventHandler<ActionEvent> actPreviaDois = (e) ->{
+        Alert ale=new Alert(AlertType.INFORMATION);
+        ale.setTitle("Aguarde");
+        ale.setContentText("Aguarde, pois a renomeação ainda não acabou.");
+        ale.showAndWait();
+    };
+    private EventHandler<ActionEvent> actPreviaUm = (e) -> {
+        FileChooser fcho = new FileChooser();
+        List<File> fil = fcho.showOpenMultipleDialog(buttonPrevia.getScene().getWindow());
+        if (fil != null) {
+            this.fil = fil;
+            tpane.getTabs().get(1).setDisable(false);
+            tpane.getSelectionModel().select(1);
+            tpane.getTabs().get(0).setDisable(true);
+            Object[] arquivos = statics.Renomear.criarRenomeacao(lista, fil);
+            List<String> arquivoA = (List<String>) arquivos[0];
+            List<String> arquivoN = (List<String>) arquivos[1];
+            listaF = new ArrayList<>();
+            colunas.clear();
+            criarColunas2();
+            for (int i = 0; i != fil.size(); i++) {
+                List<String> cont = new ArrayList<>();
+                cont.add(arquivoA.get(i));
+                cont.add(arquivoN.get(i));
+                listaF.add(cont);
+            }
+            atualizarTabela2(listaF, colunas);
+        }
     };
     @FXML
     private Button aplicar;
@@ -172,29 +201,7 @@ public class ControleCena1 implements Initializable {
             }
             remover.setDisable(true);
         });
-        buttonPrevia.setOnAction((e) -> {
-            FileChooser fcho = new FileChooser();
-            List<File> fil = fcho.showOpenMultipleDialog(buttonPrevia.getScene().getWindow());
-            if (fil != null) {
-                this.fil = fil;
-                tpane.getTabs().get(1).setDisable(false);
-                tpane.getSelectionModel().select(1);
-                tpane.getTabs().get(0).setDisable(true);
-                Object[] arquivos=statics.Renomear.criarRenomeacao(lista, fil);
-                List<String> arquivoA=(List<String>) arquivos[0];
-                List<String> arquivoN=(List<String>) arquivos[1];
-                listaF = new ArrayList<>();
-                colunas.clear();
-                criarColunas2();
-                for (int i = 0; i != fil.size(); i++) {
-                    List<String> cont = new ArrayList<>();
-                    cont.add(arquivoA.get(i));
-                    cont.add(arquivoN.get(i));
-                    listaF.add(cont);
-                }
-                atualizarTabela2(listaF, colunas);
-            }
-        });
+        buttonPrevia.setOnAction(actPreviaUm);
         voltar.setOnAction((e) -> {
             tpane.getTabs().get(0).setDisable(false);
             tpane.getSelectionModel().select(0);
@@ -205,13 +212,32 @@ public class ControleCena1 implements Initializable {
         });
         aplicar.setOnAction((ActionEvent e) -> {
             limpar();
-            ObservableList<ObservableList<String>> l=tablePrevia.getItems();
-            int i=0;
-            for (File f : fil) {
-                f.renameTo(renomearArquivo(l.get(i).get(1), f));
-                i++;
-            }
-
+            Task<Void> task = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    ObservableList<ObservableList<String>> l = tablePrevia.getItems();
+                    long a=System.currentTimeMillis();
+                    buttonPrevia.setOnAction(actPreviaDois);
+                    buttonPrevia.setText("Aguarde");
+                    System.out.println("Aguarde");
+                    int i = 0;
+                    for (File f : fil) {
+                        f.renameTo(renomearArquivo(l.get(i).get(1), f));
+                        System.out.println(i);
+                        i++;
+                    }
+                    System.out.println("fim");
+                    buttonPrevia.setText("Ver Previa");
+                    buttonPrevia.setOnAction(actPreviaUm);
+                    a=System.currentTimeMillis()-a;
+                    Alert alert=new Alert(AlertType.INFORMATION);
+                    alert.setContentText("Demorou "+a+" milisegundos para renomear "+fil.size()+" arquivos");
+                    
+                    alert.show();
+                    return null;
+                }
+            };
+            task.run();
         });
         adicionar.setOnAction(actAddTabela);
         regraC.setOnAction(actAddTabela);
@@ -223,6 +249,7 @@ public class ControleCena1 implements Initializable {
                 } else {
                     a++;
                 }
+                regraC.setText("");
                 regraT.getSelectionModel().select(a);
             }
         });
@@ -302,7 +329,7 @@ public class ControleCena1 implements Initializable {
                 col.setOnEditCommit((e) -> {
                     ObservableList<String> arr = e.getRowValue();
                     for (int j = 0; j != lista.size(); j++) {
-                        List<String> ll=lista.get(j);
+                        List<String> ll = lista.get(j);
                         if (ll.equals(arr)) {
                             String tipo = arr.get(1);
                             String conteudo = e.getNewValue();
@@ -335,13 +362,13 @@ public class ControleCena1 implements Initializable {
         return no.replace(exten, "");
     }
 
-    private void adicionarListaIndex(String tipo, String conteudo,int j) {
+    private void adicionarListaIndex(String tipo, String conteudo, int j) {
         switch (tipo) {
             case "Numeral":
                 if (statics.Numeral.validar(conteudo)) {
-                    List<String> a=lista.get(j);
-                    a.set(2,conteudo);
-                    lista.set(j,a);
+                    List<String> a = lista.get(j);
+                    a.set(2, conteudo);
+                    lista.set(j, a);
                 }
                 break;
             case "Constante":
@@ -352,13 +379,13 @@ public class ControleCena1 implements Initializable {
                 if (statics.Substituir.validar(conteudo)) {
                     lista.get(j).remove(2);
                     lista.get(j).add(conteudo);
-                
+
                 }
                 break;
         }
     }
 
-    private void adicionarLista(String tipo,String conteudo){
+    private void adicionarLista(String tipo, String conteudo) {
         List<String> ls;
         switch (tipo) {
             case "Numeral":
@@ -409,6 +436,7 @@ public class ControleCena1 implements Initializable {
                 break;
         }
     }
+
     private File renomearArquivo(String nome, File antigo) {
         String path = antigo.getPath();
         String no = antigo.getName().replace(path, "");
