@@ -59,7 +59,7 @@ public class Main extends Application {
             launch(args);
         } else if (args.length > 0 && args[0].equals("tm")) {
             try {
-                File f = new File(System.getProperty("user.dir").concat("/renomear_nataniel_A03.temp"));
+                File f = new File(System.getProperty("user.dir").concat("/renomear_nataniel_A05.temp"));
                 if (!f.exists()) {
                     f.createNewFile();
                     System.out.println("**********************************************");
